@@ -29,7 +29,7 @@ export const SearchResults = ({
 				) : (
 					<>
 						{results?.length > 0 ? (
-							<div className="flex flex-col gap-6">
+							<div className="flex flex-col gap-6 h-[60vh] overflow-auto">
 								{results?.map((x) => (
 									<div
 										className="rounded-[1.3rem] p-6 w-full flex justify-between items-center cursor-pointer hover:bg-transparent hover:border hover:border-blue-500"

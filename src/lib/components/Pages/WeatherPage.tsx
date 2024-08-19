@@ -19,6 +19,7 @@ import { WeatherIcon } from "../HomepageComponents/WeatherIcon";
 export const WeatherPage = () => {
 	const [degreeType, setDegreeType] = useState<string>("Celsius");
 	const [searchTerm, setSearchTerm] = useState("");
+	const [locationName, setLocationName] = useState("");
 	const [showSearchBox, setShowSearchBox] = useState(false);
 	const [loading, setLoading] = useState({ id: "" });
 	const [searchedCities, setSearchedCities] = useState([]);
@@ -142,8 +143,6 @@ export const WeatherPage = () => {
 		}
 	}, []);
 
-	const searchName = searchTerm || "";
-
 	return (
 		<div className="relative">
 			<Header
@@ -156,7 +155,7 @@ export const WeatherPage = () => {
 					<SearchResults
 						results={searchedCities}
 						setResults={setShowSearchBox}
-						setSearchTerm={setSearchTerm}
+						setSearchTerm={setLocationName}
 						fetchSpecificCityData={fetchAllDataOnRequest}
 						loading={loading}
 					/>
@@ -182,7 +181,7 @@ export const WeatherPage = () => {
 									onClick={() =>
 										saveAsFavorite({
 											key: curKey,
-											name: searchName,
+											name: locationName,
 											deg: fetchedData?.Temperature?.Metric?.Value,
 											text: fetchedData?.WeatherText,
 											icon: fetchedData?.WeatherIcon,
@@ -194,7 +193,7 @@ export const WeatherPage = () => {
 								<div className="flex flex-col gap-10 ">
 									<div className="flex flex-col">
 										<div className="font-bold text-[45px] text-white capitalize">
-											{searchName}
+											{locationName}
 										</div>
 										<div className="text-[1rem] text-white opacity-60">
 											{/* Chance of rain:{" "}
