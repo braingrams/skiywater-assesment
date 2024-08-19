@@ -5,11 +5,13 @@ export const SearchResults = ({
 	results,
 	setResults,
 	fetchSpecificCityData,
+	setSearchTerm,
 	loading,
 }: {
 	results: any[];
 	setResults: any;
 	fetchSpecificCityData: any;
+	setSearchTerm: any;
 	loading: any;
 }) => {
 	const onClose = () => {
@@ -33,6 +35,7 @@ export const SearchResults = ({
 										className="rounded-[1.3rem] p-6 w-full flex justify-between items-center cursor-pointer hover:bg-transparent hover:border hover:border-blue-500"
 										onClick={() => {
 											fetchSpecificCityData(x?.Key);
+											setSearchTerm(x?.EnglishName);
 											onClose();
 										}}
 									>

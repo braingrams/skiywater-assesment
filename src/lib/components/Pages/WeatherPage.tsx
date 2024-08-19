@@ -15,7 +15,6 @@ import { SearchResults } from "../HomepageComponents/SearchResults";
 import { ScaleLoader } from "react-spinners";
 import dayjs from "dayjs";
 import { WeatherIcon } from "../HomepageComponents/WeatherIcon";
-// import { SearchItem } from "../HomepageComponents/SearchItem";
 
 export const WeatherPage = () => {
 	const [degreeType, setDegreeType] = useState<string>("Celsius");
@@ -41,10 +40,8 @@ export const WeatherPage = () => {
 		setShowSearchBox(true);
 		try {
 			const data = await axios.get(
-				// `${apiUrl}/geo/1.0/direct?q=${searchTerm}&limit=5&appid=${apiKey}`
 				`${apiUrl}/locations/v1/cities/search?q=${searchTerm}&apikey=${apiKey}`
 			);
-			console.log({ data });
 			if (data.status) {
 				setSearchedCities(data.data);
 				setLoading({ id: "" });
@@ -145,9 +142,7 @@ export const WeatherPage = () => {
 		}
 	}, []);
 
-	const searchName = fetchedData?.Link?.split("/")?.at(5) || "";
-
-	// console.log({ fetchedData });
+	const searchName = searchTerm || "";
 
 	return (
 		<div className="relative">
@@ -161,6 +156,7 @@ export const WeatherPage = () => {
 					<SearchResults
 						results={searchedCities}
 						setResults={setShowSearchBox}
+						setSearchTerm={setSearchTerm}
 						fetchSpecificCityData={fetchAllDataOnRequest}
 						loading={loading}
 					/>
