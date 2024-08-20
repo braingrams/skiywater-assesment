@@ -38,6 +38,7 @@ export const SearchResults = ({
 											setSearchTerm(x?.EnglishName);
 											onClose();
 										}}
+										key={x?.Key}
 									>
 										<div className="flex gap-8 items-center">
 											<div className="flex flex-col">

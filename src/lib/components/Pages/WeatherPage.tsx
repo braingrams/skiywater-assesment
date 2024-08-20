@@ -38,6 +38,7 @@ export const WeatherPage = () => {
 
 	const fetchGeocodedCities = async () => {
 		setLoading({ id: "searching" });
+		setSearchedCities([]);
 		setShowSearchBox(true);
 		try {
 			const data = await axios.get(
@@ -49,7 +50,11 @@ export const WeatherPage = () => {
 			}
 		} catch (err: any) {
 			setLoading({ id: "" });
-			toast.error(err?.message || err?.body?.message);
+			toast.error(
+				err?.message == "Network Error"
+					? "Resource Limit exceeded: You have used the 50 daily allocated request, contact site owner if you are not the owner or upgrade if you are the site owner"
+					: err?.message || err?.body?.message
+			);
 		}
 	};
 
@@ -60,13 +65,21 @@ export const WeatherPage = () => {
 			const data = await axios.get(
 				`${apiUrl}/currentconditions/v1/${locKey}?apikey=${apiKey}`
 			);
+			console.log({ data });
 			if (data.status) {
 				setFetchedData(data.data?.at(0));
 				setLoading({ id: "" });
+				return true;
 			}
+			return false;
 		} catch (err: any) {
-			toast.error(err?.body?.message || err?.message);
+			toast.error(
+				err?.message == "Network Error"
+					? "Resource Limit exceeded: You have used the 50 daily allocated request, contact site owner if you are not the owner or upgrade if you are the site owner"
+					: err?.message || err?.body?.message
+			);
 			setLoading({ id: "" });
+			return false;
 		}
 	};
 	const fetchFiveDaysData = async (locKey: number) => {
@@ -78,10 +91,17 @@ export const WeatherPage = () => {
 			if (data.status) {
 				setdailyData(data.data?.DailyForecasts);
 				setLoading({ id: "" });
+				return true;
 			}
+			return false;
 		} catch (err: any) {
-			toast.error(err?.body?.message || err?.message);
+			toast.error(
+				err?.message == "Network Error"
+					? "Resource Limit exceeded: You have used the 50 daily allocated request, contact site owner if you are not the owner or upgrade if you are the site owner"
+					: err?.message || err?.body?.message
+			);
 			setLoading({ id: "" });
+			return false;
 		}
 	};
 	const fetchFiveHourData = async (locKey: number) => {
@@ -93,20 +113,37 @@ export const WeatherPage = () => {
 			if (data.status) {
 				sethourData(data.data);
 				setLoading({ id: "" });
+				return true;
 			}
+			return false;
 		} catch (err: any) {
-			toast.error(err?.body?.message || err?.message);
+			toast.error(
+				err?.message == "Network Error"
+					? "Resource Limit exceeded: You have used the 50 daily allocated request, contact site owner if you are not the owner or upgrade if you are the site owner"
+					: err?.message || err?.body?.message
+			);
 			setLoading({ id: "" });
+			return false;
 		}
 	};
 
 	const fetchAllDataOnRequest = async (locKey: number) => {
 		try {
-			await fetchSpecificCityData(locKey);
-			await fetchFiveHourData(locKey);
-			await fetchFiveDaysData(locKey);
+			const specificCityDataSuccess = await fetchSpecificCityData(locKey);
+			if (specificCityDataSuccess) {
+				// If the first request was successful, proceed to fetch five-hour data
+				const fiveHourDataSuccess = await fetchFiveHourData(locKey);
+				if (fiveHourDataSuccess) {
+					// If the second request was successful, proceed to fetch five-days data
+					await fetchFiveDaysData(locKey);
+				}
+			}
 		} catch (err: any) {
-			toast.error(err?.body?.message || err?.message);
+			toast.error(
+				err?.message == "Network Error"
+					? "Resource Limit exceeded: You have used the 50 daily allocated request, contact site owner if you are not the owner or upgrade if you are the site owner"
+					: err?.message || err?.body?.message
+			);
 		}
 	};
 
