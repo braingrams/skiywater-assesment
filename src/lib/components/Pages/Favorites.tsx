@@ -49,8 +49,8 @@ export const Favorites = () => {
 									))}
 								</div>
 							) : (
-								<div className="w-3/5">
-									<div className="font-medium text-[1.5rem] text-white text-center py-12">
+								<div className="w-full lg:w-3/5">
+									<div className="font-medium lg:text-[1.5rem] text-white text-center py-12">
 										You do not have any item on your favorite yet.
 									</div>
 								</div>

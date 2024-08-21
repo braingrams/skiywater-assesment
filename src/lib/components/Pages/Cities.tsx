@@ -15,6 +15,7 @@ export const Cities = () => {
 	const apiKey = import.meta.env.VITE_WEATHER_API_KEY;
 
 	const fetchMajorCities = async () => {
+		setLoading(true);
 		try {
 			const data = await axios.get(
 				`${apiUrl}/locations/v1/topcities/50?apikey=${apiKey}`
@@ -75,8 +76,8 @@ export const Cities = () => {
 								))}
 							</div>
 						) : (
-							<div className="w-3/5">
-								<div className="font-medium text-[1.5rem] text-white text-center py-12">
+							<div className="w-full lg:w-3/5">
+								<div className="font-medium lg:text-[1.5rem] text-white text-center py-12">
 									There is no city available at this time
 								</div>
 							</div>
