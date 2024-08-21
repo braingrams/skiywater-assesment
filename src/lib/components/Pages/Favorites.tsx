@@ -28,7 +28,7 @@ export const Favorites = () => {
 				<div className="text-sm text-fade mb-5 uppercase my-3">
 					Your Favorites
 				</div>
-				<div className="flex gap-6">
+				<div className="flex gap-6 lg:flex-row flex-col">
 					{loading ? (
 						<div className="w-full flex justify-center py-12">
 							<ScaleLoader color="white" />
@@ -36,7 +36,7 @@ export const Favorites = () => {
 					) : (
 						<>
 							{favorite?.length > 0 ? (
-								<div className="flex flex-col gap-6 w-3/5">
+								<div className="flex flex-col gap-6 w-full lg:w-3/5">
 									{favorite?.map((x: any) => (
 										<SearchItem
 											deg={x?.deg}
@@ -55,7 +55,7 @@ export const Favorites = () => {
 							)}
 						</>
 					)}
-					<div className="flex flex-col gap-4 w-2/5">
+					<div className="lg:flex flex-col gap-4 w-2/5 hidden">
 						<div className="rounded-[1.5rem] p-6 w-full bg-brand">
 							<img className="w-[60%] h-auto" src="/logo.png" alt="logo" />
 							{/* <div className="text-sm text-fade mb-5 uppercase">

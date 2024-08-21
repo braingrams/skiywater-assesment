@@ -15,13 +15,15 @@ import { SearchResults } from "../HomepageComponents/SearchResults";
 import { ScaleLoader } from "react-spinners";
 import dayjs from "dayjs";
 import { WeatherIcon } from "../HomepageComponents/WeatherIcon";
+import { useSearchParams } from "react-router-dom";
 
 export const WeatherPage = () => {
 	const [degreeType, setDegreeType] = useState<string>("Celsius");
 	const [searchTerm, setSearchTerm] = useState("");
 	const [locationName, setLocationName] = useState("");
 	const [showSearchBox, setShowSearchBox] = useState(false);
-	const [loading, setLoading] = useState({ id: "" });
+	const [loading, setLoading] = useState({ id: "weather" });
+	const [searchParams, setSearchParams] = useSearchParams();
 	const [searchedCities, setSearchedCities] = useState([]);
 	const [fetchedData, setFetchedData] = useState<any>(null);
 	const [dailyData, setdailyData] = useState<any>(null);
@@ -30,6 +32,8 @@ export const WeatherPage = () => {
 	const conversions = ["Celsius", "Fahrenheit"];
 	const apiUrl = import.meta.env.VITE_API_KEY;
 	const apiKey = import.meta.env.VITE_WEATHER_API_KEY;
+
+	const locationKey = searchParams.get("key");
 
 	function fahrenheitToCelsius(fahrenheit: number) {
 		const celsius = ((fahrenheit - 32) * 5) / 9;
@@ -59,7 +63,6 @@ export const WeatherPage = () => {
 	};
 
 	const fetchSpecificCityData = async (locKey: number) => {
-		setLoading({ id: "weather" });
 		setCurKey(locKey);
 		try {
 			const data = await axios.get(
@@ -68,7 +71,7 @@ export const WeatherPage = () => {
 			console.log({ data });
 			if (data.status) {
 				setFetchedData(data.data?.at(0));
-				setLoading({ id: "" });
+
 				return true;
 			}
 			return false;
@@ -78,19 +81,16 @@ export const WeatherPage = () => {
 					? "Resource Limit exceeded: You have used the 50 daily allocated request, contact site owner if you are not the owner or upgrade if you are the site owner"
 					: err?.message || err?.body?.message
 			);
-			setLoading({ id: "" });
 			return false;
 		}
 	};
 	const fetchFiveDaysData = async (locKey: number) => {
-		setLoading({ id: "daily" });
 		try {
 			const data = await axios.get(
 				`${apiUrl}/forecasts/v1/daily/5day/${locKey}?apikey=${apiKey}`
 			);
 			if (data.status) {
 				setdailyData(data.data?.DailyForecasts);
-				setLoading({ id: "" });
 				return true;
 			}
 			return false;
@@ -100,12 +100,10 @@ export const WeatherPage = () => {
 					? "Resource Limit exceeded: You have used the 50 daily allocated request, contact site owner if you are not the owner or upgrade if you are the site owner"
 					: err?.message || err?.body?.message
 			);
-			setLoading({ id: "" });
 			return false;
 		}
 	};
 	const fetchFiveHourData = async (locKey: number) => {
-		setLoading({ id: "hour" });
 		try {
 			const data = await axios.get(
 				`${apiUrl}/forecasts/v1/hourly/12hour/${locKey}?apikey=${apiKey}`
@@ -122,23 +120,27 @@ export const WeatherPage = () => {
 					? "Resource Limit exceeded: You have used the 50 daily allocated request, contact site owner if you are not the owner or upgrade if you are the site owner"
 					: err?.message || err?.body?.message
 			);
-			setLoading({ id: "" });
 			return false;
 		}
 	};
 
 	const fetchAllDataOnRequest = async (locKey: number) => {
+		setLoading({ id: "weather" });
 		try {
 			const specificCityDataSuccess = await fetchSpecificCityData(locKey);
 			if (specificCityDataSuccess) {
+				setLoading({ id: "daily" });
 				// If the first request was successful, proceed to fetch five-hour data
 				const fiveHourDataSuccess = await fetchFiveHourData(locKey);
 				if (fiveHourDataSuccess) {
+					setLoading({ id: "hour" });
 					// If the second request was successful, proceed to fetch five-days data
 					await fetchFiveDaysData(locKey);
+					setLoading({ id: "" });
 				}
 			}
 		} catch (err: any) {
+			setLoading({ id: "" });
 			toast.error(
 				err?.message == "Network Error"
 					? "Resource Limit exceeded: You have used the 50 daily allocated request, contact site owner if you are not the owner or upgrade if you are the site owner"
@@ -180,45 +182,55 @@ export const WeatherPage = () => {
 		}
 	}, []);
 
+	useEffect(() => {
+		if (locationKey && locationKey !== "undefined") {
+			fetchAllDataOnRequest(locationKey as unknown as number);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
+
+	const modeledTitle = fetchedData?.Link?.split("/")?.at(5);
+
 	return (
-		<div className="relative">
+		<div className="relative mb-14 lg:mb-0">
 			<Header
 				setSearchTerm={setSearchTerm}
 				searchTerm={searchTerm}
 				searchFn={fetchGeocodedCities}
 			/>
 			{showSearchBox && (
-				<div className="absolute top-15 left-0 w-3/5 z-[999]">
+				<div className="absolute top-15 left-0 w-full lg:w-3/5 z-[999]">
 					<SearchResults
 						results={searchedCities}
 						setResults={setShowSearchBox}
 						setSearchTerm={setLocationName}
 						fetchSpecificCityData={fetchAllDataOnRequest}
 						loading={loading}
+						setSearchParams={setSearchParams}
 					/>
 				</div>
 			)}
 			{!fetchedData ? (
-				<div className="font-medium text-[1.5rem] text-white py-12 px-3">
+				<div className="font-medium text-[1.1rem] lg:text-[1.5rem] text-white py-12 px-3">
 					Search for a city to view weather information
 				</div>
 			) : (
-				<div className="flex gap-6">
+				<div className="flex gap-6 flex-col lg:flex-row">
 					{/* First top */}
 					{loading?.id == "weather" ? (
 						<div className="w-full flex justify-center py-12">
 							<ScaleLoader color="white" />
 						</div>
 					) : (
-						<div className="flex flex-col gap-4 w-3/5">
+						<div className="flex flex-col gap-4 w-full lg:w-3/5">
 							{/* <SearchItem deg="31" name="Madrid" sub="10:23" /> */}
-							<div className="flex justify-between w-full items-center px-12 py-8 relative">
+							<div className="flex flex-col-reverse lg:flex-row justify-between w-full lg:items-center px-6 lg:px-12 py-8 relative">
 								<div
 									className="absolute right-0 top-5 cursor-pointer"
 									onClick={() =>
 										saveAsFavorite({
 											key: curKey,
-											name: locationName,
+											name: locationName || modeledTitle,
 											deg: fetchedData?.Temperature?.Metric?.Value,
 											text: fetchedData?.WeatherText,
 											icon: fetchedData?.WeatherIcon,
@@ -227,44 +239,59 @@ export const WeatherPage = () => {
 								>
 									{isFav ? <FaHeart color="yellow" /> : <FaRegHeart />}
 								</div>
-								<div className="flex flex-col gap-10 ">
-									<div className="flex flex-col">
-										<div className="font-bold text-[45px] text-white capitalize">
-											{locationName}
-										</div>
-										<div className="text-[1rem] text-white opacity-60">
-											{/* Chance of rain:{" "}
+								<div>
+									<div className="flex lg:flex-col gap-10 justify-between lg:justify-start">
+										<div className="flex flex-col">
+											<div className="font-bold text-[30px] lg:text-[45px] text-white capitalize">
+												{locationName || modeledTitle}
+											</div>
+											<div className="lg:text-[1rem] text-sm text-white opacity-60">
+												{/* Chance of rain:{" "}
 											{fetchedData?.Temperature?.Metric?.Value < 15
 												? "31"
 												: "10"}
 											% */}
-											{fetchedData?.WeatherText}
+												{fetchedData?.WeatherText}
+											</div>
+										</div>
+										<div>
+											<div className="font-bold lg:text-[4.5rem] text-[2rem] text-white">
+												{degreeType == "Celsius"
+													? fetchedData?.Temperature?.Metric?.Value
+													: fetchedData?.Temperature?.Imperial?.Value}
+												&deg;
+											</div>
+											<div className="hidden lg:flex gap-2 bg-brand px-1 py-1 rounded-full cursor-pointer lg:w-fit w-full">
+												{conversions?.map((x) => (
+													<div
+														className={`px-4 rounded-full ${
+															degreeType == x ? "bg-blue-500" : "bg-transparent"
+														}`}
+														key={x}
+														onClick={() => setDegreeType(x)}
+													>
+														{x}
+													</div>
+												))}
+											</div>
 										</div>
 									</div>
-									<div>
-										<div className="font-bold text-[4.5rem] text-white">
-											{degreeType == "Celsius"
-												? fetchedData?.Temperature?.Metric?.Value
-												: fetchedData?.Temperature?.Imperial?.Value}
-											&deg;
-										</div>
-										<div className="flex gap-2 bg-brand px-1 py-1 rounded-full cursor-pointer w-fit">
-											{conversions?.map((x) => (
-												<div
-													className={`px-4 rounded-full ${
-														degreeType == x ? "bg-blue-500" : "bg-transparent"
-													}`}
-													key={x}
-													onClick={() => setDegreeType(x)}
-												>
-													{x}
-												</div>
-											))}
-										</div>
+									<div className="lg:hidden flex gap-2 bg-brand px-1 py-1 rounded-full cursor-pointer lg:w-fit w-full mt-3 mx-auto">
+										{conversions?.map((x) => (
+											<div
+												className={`px-4 w-full text-center rounded-full ${
+													degreeType == x ? "bg-blue-500" : "bg-transparent"
+												}`}
+												key={x}
+												onClick={() => setDegreeType(x)}
+											>
+												{x}
+											</div>
+										))}
 									</div>
 								</div>
 
-								<div className="w-[210px]">
+								<div className="lg:w-[210px]">
 									<WeatherIcon fetchedData={fetchedData?.WeatherIcon} />
 								</div>
 							</div>
@@ -273,17 +300,17 @@ export const WeatherPage = () => {
 								<div className="text-sm text-fade mb-5 uppercase">
 									Today's forecast
 								</div>
-								<div className="flex flex-nowrap overflow-auto w-full mx-auto">
+								<div className="flex flex-nowrap overflow-auto w-full mx-auto pb-2">
 									{hourData?.slice(0, 6).map((x: any) => (
-										<div className="flex flex-col gap-4 items-center border-r border-gray-600 px-6 last:border-0">
-											<div className="text-fade text-sm font-medium">
+										<div className="flex flex-col gap-4 items-center border-r border-gray-600 lg:px-6 px-2 last:border-0 w-fit">
+											<div className="text-fade lg:text-sm text-[.6rem] font-medium whitespace-nowrap">
 												{dayjs(x?.DateTime).format("hh:mm A")}
 											</div>
 											<WeatherIcon
 												fetchedData={x?.WeatherIcon}
-												className="h-[2.5rem] w-auto"
+												className="lg:h-[2.5rem] lg:w-auto w-10"
 											/>
-											<div className="text-white text-[1.4rem] font-bold">
+											<div className="text-white lg:text-[1.4rem] font-bold">
 												{degreeType == "Fahrenheit"
 													? x?.Temperature?.Value
 													: fahrenheitToCelsius(x?.Temperature?.Value)}
@@ -302,7 +329,11 @@ export const WeatherPage = () => {
 									<ConditionView
 										icon={<FaThermometerFull />}
 										title="Precipitation"
-										value={fetchedData?.HasPrecipitation}
+										value={
+											fetchedData?.HasPrecipitation
+												? fetchedData?.Precipitation
+												: 0
+										}
 									/>
 									<ConditionView
 										icon={<FaWind />}
@@ -330,7 +361,7 @@ export const WeatherPage = () => {
 							<ScaleLoader color="white" />
 						</div>
 					) : (
-						<div className="flex flex-col gap-4 w-2/5 ">
+						<div className="flex flex-col gap-4 lg:w-2/5 ">
 							<div className="rounded-[1.5rem] p-6 w-full bg-brand h-[80%]">
 								<div className="text-sm text-fade mb-5 uppercase">
 									5-Day Forecast
@@ -338,7 +369,7 @@ export const WeatherPage = () => {
 								<div className="flex  flex-col w-full">
 									{dailyData?.map((x: any) => (
 										<div className="flex w-full justify-between items-center border-b border-gray-600 last:border-0 h-24">
-											<div className="text-fade text-sm w-[30%]">
+											<div className="text-fade text-sm lg:w-[30%] w-[20%]">
 												{dayjs(x.Date).format("DD/MM/YY") ==
 												dayjs().format("DD/MM/YY")
 													? "Today"
@@ -348,7 +379,7 @@ export const WeatherPage = () => {
 												<div className="flex gap-4 items-center">
 													<WeatherIcon
 														fetchedData={x?.Day?.Icon}
-														className="h-[2rem] w-auto"
+														className="lg:h-[2rem] lg:w-auto w-8"
 													/>
 													<div className="text-white text-sm font-medium">
 														{x?.Day?.IconPhrase}

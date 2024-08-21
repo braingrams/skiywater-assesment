@@ -13,9 +13,9 @@ export const MainLayout = () => {
 					<Outlet />
 				</main>
 			) : (
-				<div className="flex p-8">
+				<div className="flex p-8 w-full">
 					<SideNav />
-					<div className="w-[91%] ml-auto">
+					<div className="lg:w-[91%] w-full ml-auto">
 						<main>
 							<Outlet />
 						</main>

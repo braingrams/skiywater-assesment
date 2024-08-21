@@ -13,9 +13,13 @@ export const SideNav = () => {
 		},
 	];
 	return (
-		<div className="fixed h-[93%] w-[7%] rounded-[1.5rem] flex flex-col gap-16 bg-brand py-8">
-			<img className="h-auto w-[70%] mx-auto" src="/logo.png" alt="logo" />
-			<div className="flex flex-col gap-10">
+		<div className="fixed h-20 lg:h-[92%] w-[100%] lg:w-[7%] lg:rounded-[1.5rem] flex lg:flex-col gap-16 bg-[#0B131E] lg:bg-brand lg:py-8 bottom-0 lg:bottom-auto items-center justify-center lg:justify-start z-[999] left-0 lg:left-[unset]">
+			<img
+				className="h-auto w-[70%] mx-auto lg:block hidden"
+				src="/logo.png"
+				alt="logo"
+			/>
+			<div className="flex lg:flex-col gap-10 h-14 lg:h-auto rounded-[1.5rem] lg:rounded-none items-center lg:items-start lg:bg-none bg-brand w-[80%] lg:w-auto justify-center">
 				{menuItemsList?.map((x) => (
 					<MenuItem icon={x.icon} text={x.name} url={x.url} key={x.id} />
 				))}

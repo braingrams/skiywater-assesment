@@ -7,15 +7,24 @@ export const SearchResults = ({
 	fetchSpecificCityData,
 	setSearchTerm,
 	loading,
+	setSearchParams,
 }: {
 	results: any[];
 	setResults: any;
 	fetchSpecificCityData: any;
 	setSearchTerm: any;
 	loading: any;
+	setSearchParams: any;
 }) => {
 	const onClose = () => {
 		setResults(null);
+	};
+
+	const performSelection = (value: any) => {
+		fetchSpecificCityData(value?.Key);
+		setSearchTerm(value?.EnglishName);
+		setSearchParams({ key: value?.Key });
+		onClose();
 	};
 	return (
 		<div className="w-full">
@@ -32,17 +41,15 @@ export const SearchResults = ({
 							<div className="flex flex-col gap-6 h-[60vh] overflow-auto">
 								{results?.map((x) => (
 									<div
-										className="rounded-[1.3rem] p-6 w-full flex justify-between items-center cursor-pointer hover:bg-transparent hover:border hover:border-blue-500"
+										className="rounded-[1.3rem] p-2 lg:p-6 w-full flex justify-between lg:items-center cursor-pointer hover:bg-transparent hover:border hover:border-blue-500"
 										onClick={() => {
-											fetchSpecificCityData(x?.Key);
-											setSearchTerm(x?.EnglishName);
-											onClose();
+											performSelection(x);
 										}}
 										key={x?.Key}
 									>
 										<div className="flex gap-8 items-center">
 											<div className="flex flex-col">
-												<div className="font-medium text-[1.5rem] text-white">
+												<div className="font-medium lg:text-[1.5rem] text-white">
 													{x?.EnglishName}
 												</div>
 												<div className="text-[.7rem] text-white opacity-60">
@@ -50,7 +57,7 @@ export const SearchResults = ({
 												</div>
 											</div>
 										</div>
-										<div className="text-[1.5rem] text-white opacity-80">
+										<div className="lg:text-[1.5rem] text-white opacity-80">
 											{x?.Country?.EnglishName}
 										</div>
 									</div>

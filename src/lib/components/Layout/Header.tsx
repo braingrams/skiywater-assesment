@@ -9,7 +9,7 @@ export const Header = ({
 }) => {
 	return (
 		<div className="w-full h-16">
-			<div className="w-3/5 relative h-12">
+			<div className="lg:w-3/5 relative h-12">
 				<input
 					className="rounded-lg bg-brand px-4 text-white h-full w-full text-sm focus:outline-none"
 					placeholder="Search for cities"

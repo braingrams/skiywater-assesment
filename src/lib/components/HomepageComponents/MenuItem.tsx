@@ -13,7 +13,7 @@ export const MenuItem = ({
 	const isActive = location?.pathname == url;
 	return (
 		<Link to={url}>
-			<div className="flex flex-col items-center gap-4">
+			<div className="flex lg:flex-col items-center gap-4">
 				<div
 					className={`${
 						isActive ? "text-white font-semibold" : "text-gray-400"
