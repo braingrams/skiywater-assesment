@@ -379,7 +379,7 @@ export const WeatherPage = () => {
 												<div className="flex gap-4 items-center">
 													<WeatherIcon
 														fetchedData={x?.Day?.Icon}
-														className="lg:h-[2rem] lg:w-auto w-8"
+														className="lg:w-[2rem] lg:h-auto w-8"
 													/>
 													<div className="text-white text-sm font-medium">
 														{x?.Day?.IconPhrase}
