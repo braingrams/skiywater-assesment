@@ -28,12 +28,11 @@ export const WeatherPage = () => {
 	const [fetchedData, setFetchedData] = useState<any>(null);
 	const [dailyData, setdailyData] = useState<any>(null);
 	const [hourData, sethourData] = useState<any>(null);
-	const [curKey, setCurKey] = useState<any>();
+	const locationKey = searchParams.get("key");
+	const [curKey, setCurKey] = useState<any>(locationKey);
 	const conversions = ["Celsius", "Fahrenheit"];
 	const apiUrl = import.meta.env.VITE_API_KEY;
 	const apiKey = import.meta.env.VITE_WEATHER_API_KEY;
-
-	const locationKey = searchParams.get("key");
 
 	function fahrenheitToCelsius(fahrenheit: number) {
 		const celsius = ((fahrenheit - 32) * 5) / 9;
@@ -68,7 +67,6 @@ export const WeatherPage = () => {
 			const data = await axios.get(
 				`${apiUrl}/currentconditions/v1/${locKey}?apikey=${apiKey}`
 			);
-			console.log({ data });
 			if (data.status) {
 				setFetchedData(data.data?.at(0));
 
@@ -179,8 +177,9 @@ export const WeatherPage = () => {
 		if (isFavorite) {
 			const parsedFavorite = JSON.parse(isFavorite as unknown as string);
 			setFavorite(parsedFavorite);
+			setIsFav(parsedFavorite?.find((x: any) => x.key == curKey));
 		}
-	}, []);
+	}, [curKey]);
 
 	useEffect(() => {
 		if (locationKey && locationKey !== "undefined") {
