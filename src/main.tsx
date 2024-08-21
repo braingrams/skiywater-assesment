@@ -8,6 +8,7 @@ import { MainLayout } from "./lib/components/Layout/MainLayout";
 import { WeatherPage } from "./lib/components/Pages/WeatherPage";
 import { Favorites } from "./lib/components/Pages/Favorites";
 import { Toaster } from "react-hot-toast";
+import { Cities } from "./lib/components/Pages/Cities";
 
 const router = createBrowserRouter([
 	{
@@ -22,6 +23,10 @@ const router = createBrowserRouter([
 			{
 				path: "/weather",
 				element: <WeatherPage />,
+			},
+			{
+				path: "/cities",
+				element: <Cities />,
 			},
 			{
 				path: "/favorites",

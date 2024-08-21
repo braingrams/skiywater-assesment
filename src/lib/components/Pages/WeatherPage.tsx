@@ -191,7 +191,7 @@ export const WeatherPage = () => {
 	const modeledTitle = fetchedData?.Link?.split("/")?.at(5);
 
 	return (
-		<div className="relative mb-14 lg:mb-0">
+		<div className="relative mb-14 lg:mb-8">
 			<Header
 				setSearchTerm={setSearchTerm}
 				searchTerm={searchTerm}
@@ -360,7 +360,7 @@ export const WeatherPage = () => {
 							<ScaleLoader color="white" />
 						</div>
 					) : (
-						<div className="flex flex-col gap-4 lg:w-2/5 ">
+						<div className="flex flex-col gap-4 lg:w-[32%] lg:fixed right-10 lg:h-[102vh]">
 							<div className="rounded-[1.5rem] p-6 w-full bg-brand h-[80%]">
 								<div className="text-sm text-fade mb-5 uppercase">
 									5-Day Forecast

@@ -36,7 +36,7 @@ export const Favorites = () => {
 					) : (
 						<>
 							{favorite?.length > 0 ? (
-								<div className="flex flex-col gap-6 w-full lg:w-3/5">
+								<div className="flex flex-col gap-6 w-full lg:w-3/5 lg:mb-8 mb-18">
 									{favorite?.map((x: any) => (
 										<SearchItem
 											deg={x?.deg}
@@ -57,7 +57,7 @@ export const Favorites = () => {
 							)}
 						</>
 					)}
-					<div className="lg:flex flex-col gap-4 w-2/5 hidden h-[75vh]">
+					<div className="lg:flex flex-col gap-4 w-[32%] hidden h-[75vh] fixed right-10">
 						<div className="rounded-[1.5rem] p-6 w-full bg-brand h-full flex justify-center items-center">
 							<img
 								className="w-[60%] h-auto  m-auto"
