@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { WeatherIcon } from "./WeatherIcon";
 
 export const SearchItem = ({
@@ -5,14 +6,17 @@ export const SearchItem = ({
 	sub,
 	deg,
 	icon,
+	itemKey,
 }: {
 	name: string;
 	sub: string;
 	deg: string;
 	icon: number;
+	itemKey: number;
 }) => {
+	const navigate = useNavigate();
 	return (
-		<div className="rounded-[1.3rem] p-4 lg:p-6 w-full bg-brand flex justify-between items-center cursor-pointer hover:bg-transparent hover:border hover:border-blue-500">
+		<div className="rounded-[1.3rem] p-4 lg:p-6 w-full bg-brand flex justify-between items-center cursor-pointer hover:bg-transparent hover:border hover:border-blue-500" onClick={()=> navigate(`/weather?key=${itemKey}`)}>
 			<div className="flex lg:gap-8 gap-4 items-center">
 				<WeatherIcon
 					fetchedData={icon}

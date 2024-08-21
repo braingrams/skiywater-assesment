@@ -43,6 +43,8 @@ export const Favorites = () => {
 											name={x?.name}
 											sub={x?.text}
 											icon={x?.icon}
+											key={x?.key}
+											itemKey={x?.key}
 										/>
 									))}
 								</div>
@@ -55,9 +57,13 @@ export const Favorites = () => {
 							)}
 						</>
 					)}
-					<div className="lg:flex flex-col gap-4 w-2/5 hidden">
-						<div className="rounded-[1.5rem] p-6 w-full bg-brand">
-							<img className="w-[60%] h-auto" src="/logo.png" alt="logo" />
+					<div className="lg:flex flex-col gap-4 w-2/5 hidden h-[75vh]">
+						<div className="rounded-[1.5rem] p-6 w-full bg-brand h-full flex justify-center items-center">
+							<img
+								className="w-[60%] h-auto  m-auto"
+								src="/logo.png"
+								alt="logo"
+							/>
 							{/* <div className="text-sm text-fade mb-5 uppercase">
 						My Location 7-Day Forecast
 					</div>
